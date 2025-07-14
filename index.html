@@ -1,0 +1,1927 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recetas Únicas!</title>
+    <!-- Favicon: Usando el SVG del gorro de chef como favicon -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10'%3E%3C/path%3E%3C/svg%3E" type="image/svg+xml">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif; /* Fuente elegante y moderna para el cuerpo */
+            background: linear-gradient(to bottom, #f8fafc, #ffffff); /* Degradado sutil de blanco muy claro a blanco puro */
+        }
+        .header-title, .gradient-text-title, .gradient-text-description {
+            background-image: linear-gradient(to right, #6366f1, #a855f7); /* Degradado de índigo a púrpura */
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .header-title {
+            font-family: 'Playfair Display', serif; /* Fuente distintiva para el título principal */
+        }
+        .recipe-card-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+        .recipe-card-details.open {
+            max-height: 500px; /* Suficiente para la mayoría de las recetas, ajustar si es necesario */
+            transition: max-height 0.7s ease-in;
+        }
+        /* Estilo para scrollbar en detalles de receta si el contenido es muy largo */
+        .recipe-card-details ul, .recipe-card-details ol {
+            max-height: 200px; /* Limita la altura de las listas */
+            overflow-y: auto; /* Agrega scroll si el contenido excede la altura */
+            padding-right: 1rem; /* Espacio para el scrollbar */
+        }
+        /* Estilos personalizados para el scrollbar */
+        .recipe-card-details ul::-webkit-scrollbar, .recipe-card-details ol::-webkit-scrollbar {
+            width: 8px;
+        }
+        .recipe-card-details ul::-webkit-scrollbar-track, .recipe-card-details ol::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .recipe-card-details ul::-webkit-scrollbar-thumb, .recipe-card-details ol::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .recipe-card-details ul::-webkit-scrollbar-thumb:hover, .recipe-card-details ol::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .recipe-image {
+            width: 100%;
+            height: 192px; /* h-48 */
+            object-fit: cover; /* Asegura que la imagen cubra el área sin distorsionarse */
+            border-bottom: 1px solid #cbd5e1;
+        }
+        .image-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 192px;
+            background-color: #e2e8f0;
+            color: #64748b;
+            font-size: 1.2rem;
+        }
+        /* Estilo para la imagen de portada */
+        #banner-image-container {
+            width: 100%;
+            height: 480px; /* Altura fija para el banner de collage */
+            overflow: hidden;
+            background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        #banner-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Imagen de Portada (Banner) -->
+    <div id="banner-image-container">Cargando imagen de cabecera...</div>
+
+    <!-- Header -->
+    <header class="bg-white shadow-lg py-6 px-4 sm:px-6 lg:px-8 rounded-b-xl">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <!-- Nuevo Logo: Gorro de Chef (SVG) -->
+                <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                </svg>
+                <h1 class="header-title text-4xl sm:text-5xl font-bold">Recetas Únicas!</h1>
+            </div>
+            <nav class="mt-4 sm:mt-0">
+            </nav>
+        </div>
+    </header>
+
+    <!-- Contenido Principal de Recetas -->
+    <main class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <section class="mb-12">
+            <h2 class="gradient-text-title text-3xl sm:text-4xl font-bold text-center mb-8">Sabores del Mundo a tu Alcance</h2>
+            <p class="gradient-text-description text-center text-lg max-w-3xl mx-auto">Explora una colección de recetas sencillas y deliciosas de diferentes culturas, perfectas para cualquier ocasión. ¡Anímate a cocinar!</p>
+        </section>
+
+        <!-- Sección de Publicidad (Monetizable) -->
+        <section class="mb-12 p-6 bg-yellow-100 border border-yellow-300 rounded-xl text-center">
+            <p class="text-yellow-800 font-semibold text-lg">¡Espacio Publicitario Aquí!</p>
+            <p class="text-yellow-700 text-sm">Podrías integrar anuncios de Google AdSense, banners de afiliados o promociones directas.</p>
+            <div class="mx-auto mt-4 rounded-md shadow-sm bg-yellow-200 p-4 text-yellow-900 text-sm">
+                [Anuncio de ejemplo: Descubre utensilios de cocina con descuento]
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Receta 1: Tacos al Pastor (México) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Tacos al Pastor">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Tacos al Pastor</h3>
+                    <p class="text-gray-600 text-sm mb-4">Un clásico de la cocina mexicana, con carne de cerdo marinada y piña.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: México</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>500g de carne de cerdo (paleta o lomo)</li>
+                            <li>3 chiles guajillo, 2 chiles ancho (hidratados y sin semillas)</li>
+                            <li>1/4 de piña fresca, en cubos</li>
+                            <li>1/4 de cebolla, 2 dientes de ajo</li>
+                            <li>1/2 taza de vinagre blanco</li>
+                            <li>Especias: comino, orégano, achiote</li>
+                            <li>Tortillas de maíz, cilantro y cebolla picados para servir</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Licuar los chiles, cebolla, ajo, vinagre y especias para hacer la marinada.</li>
+                            <li>Cortar la carne en tiras finas y marinar por al menos 2 horas.</li>
+                            <li>Cocinar la carne en un sartén o parrilla hasta que esté dorada. Añadir la piña al final.</li>
+                            <li>Servir en tortillas calientes con cilantro y cebolla.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 2: Pasta Carbonara (Italia) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Pasta Carbonara">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Pasta Carbonara</h3>
+                    <p class="text-gray-600 text-sm mb-4">La auténtica receta italiana, cremosa y llena de sabor.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Italia</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>200g de spaghetti o rigatoni</li>
+                            <li>100g de guanciale o panceta</li>
+                            <li>2 yemas de huevo grandes</li>
+                            <li>50g de queso Pecorino Romano rallado</li>
+                            <li>Pimienta negra recién molida</li>
+                            <li>Sal al gusto</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Cocinar la pasta en agua con sal hasta que esté al dente. Reservar un poco del agua de cocción.</li>
+                            <li>Mientras, cortar el guanciale en cubos y cocinar en un sartén sin aceite hasta que esté crujiente.</li>
+                            <li>En un bol, batir las yemas con el Pecorino y abundante pimienta negra.</li>
+                            <li>Escurrir la pasta y añadirla directamente al sartén con el guanciale.</li>
+                            <li>Retirar del fuego, agregar la mezcla de huevo y un poco de agua de cocción. Mezclar rápidamente hasta que esté cremosa.</li>
+                            <li>Servir inmediatamente con más Pecorino y pimienta.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 3: Curry de Pollo (India) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Curry de Pollo">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Curry de Pollo</h3>
+                    <p class="text-gray-600 text-sm mb-4">Un curry aromático y reconfortante con pollo tierno y especias.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: India</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>500g de pechuga de pollo, en cubos</li>
+                            <li>1 cebolla grande, picada</li>
+                            <li>2 dientes de ajo, picados</li>
+                            <li>1 trozo de jengibre fresco, rallado</li>
+                            <li>1 lata (400ml) de leche de coco</li>
+                            <li>1 lata (400g) de tomates triturados</li>
+                            <li>2 cucharadas de pasta de curry (rojo o verde)</li>
+                            <li>Aceite vegetal, cilantro fresco para decorar</li>
+                            <li>Arroz basmati para acompañar</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Calentar aceite en una olla grande. Sofreír cebolla hasta que esté transparente.</li>
+                            <li>Añadir ajo y jengibre, cocinar por 1 minuto.</li>
+                            <li>Incorporar la pasta de curry y cocinar por 2 minutos, revolviendo.</li>
+                            <li>Agregar el pollo y cocinar hasta que se dore ligeramente.</li>
+                            <li>Verter los tomates triturados y la leche de coco. Llevar a ebullición, luego reducir el fuego y cocinar a fuego lento por 15-20 minutos, o hasta que el pollo esté cocido.</li>
+                            <li>Servir caliente con arroz basmati y decorar con cilantro fresco.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 4: Sushi Rolls (Japón) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Sushi Rolls">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Sushi Rolls</h3>
+                    <p class="text-gray-600 text-sm mb-4">Prepara tus propios rollos de sushi con tus ingredientes favoritos.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Japón</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>2 tazas de arroz para sushi</li>
+                            <li>2 tazas de agua</li>
+                            <li>1/4 taza de vinagre de arroz</li>
+                            <li>2 cucharadas de azúcar</li>
+                            <li>1 cucharadita de sal</li>
+                            <li>Hojas de alga nori</li>
+                            <li>Relleno a elección: salmón, atún, pepino, aguacate, surimi</li>
+                            <li>Salsa de soja, wasabi y jengibre encurtido para servir</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Lavar el arroz hasta que el agua salga clara. Cocinar el arroz con el agua.</li>
+                            <li>Mientras el arroz se cocina, mezclar el vinagre de arroz, azúcar y sal hasta disolver.</li>
+                            <li>Una vez cocido el arroz, pasarlo a un bol y mezclar con la preparación de vinagre. Dejar enfriar.</li>
+                            <li>Colocar una hoja de nori sobre una esterilla de bambú. Extender una capa fina de arroz sobre el nori, dejando un borde libre.</li>
+                            <li>Colocar los rellenos en el centro. Enrollar firmemente.</li>
+                            <li>Cortar el rollo en piezas y servir con salsa de soja, wasabi y jengibre.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 5: Feijoada (Brasil) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Feijoada">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Feijoada</h3>
+                    <p class="text-gray-600 text-sm mb-4">El plato nacional de Brasil, un guiso contundente de frijoles negros y carne.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Brasil</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>500g de frijoles negros</li>
+                            <li>200g de carne seca (desalado y cocido)</li>
+                            <li>150g de costillas de cerdo saladas (desaladas y cocidas)</li>
+                            <li>100g de panceta ahumada</li>
+                            <li>1 chorizo, 1 linguiça (salchicha brasileña)</li>
+                            <li>1 cebolla, 3 dientes de ajo</li>
+                            <li>Hojas de laurel, aceite vegetal</li>
+                            <li>Arroz blanco, farofa (harina de yuca tostada) y naranja para servir</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Remojar los frijoles negros durante la noche. Cocinarlos hasta que estén tiernos.</li>
+                            <li>Desalar y cocinar las carnes por separado. Cortar en trozos.</li>
+                            <li>En una olla grande, sofreír cebolla y ajo en aceite. Añadir la panceta, chorizo y linguiça, cocinar hasta dorar.</li>
+                            <li>Incorporar las carnes cocidas y los frijoles negros con su caldo. Añadir hojas de laurel.</li>
+                            <li>Cocinar a fuego lento por al menos 30 minutos, permitiendo que los sabores se mezclen.</li>
+                            <li>Servir caliente con arroz blanco, farofa y rodajas de naranja.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 6: Fish and Chips (Reino Unido) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Fish and Chips">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Fish and Chips</h3>
+                    <p class="text-gray-600 text-sm mb-4">El icónico plato británico: pescado frito crujiente con patatas.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Reino Unido</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>4 filetes de pescado blanco (bacalao, merluza)</li>
+                            <li>2 papas grandes, cortadas en bastones gruesos</li>
+                            <li>1 taza de harina</li>
+                            <li>1 taza de cerveza fría</li>
+                            <li>1 cucharadita de polvo para hornear</li>
+                            <li>Sal y pimienta al gusto</li>
+                            <li>Aceite para freír</li>
+                            <li>Vinagre de malta y salsa tártara para servir</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Preparar las papas: remojar en agua fría por 30 minutos, secar bien.</li>
+                            <li>Freír las papas en aceite caliente (160°C) hasta que estén ligeramente tiernas pero no doradas. Retirar y escurrir.</li>
+                            <li>Para el rebozado: mezclar harina, polvo para hornear, sal y pimienta. Añadir la cerveza fría y batir hasta obtener una masa homogénea.</li>
+                            <li>Subir la temperatura del aceite a 180°C. Sumergir los filetes de pescado en el rebozado.</li>
+                            <li>Freír el pescado hasta que esté dorado y crujiente. Retirar y escurrir.</li>
+                            <li>Volver a freír las papas a 180°C hasta que estén doradas y crujientes.</li>
+                            <li>Servir el pescado y las papas inmediatamente con vinagre de malta y salsa tártara.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 7: Pad Thai (Tailandia) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Pad Thai">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Pad Thai</h3>
+                    <p class="text-gray-600 text-sm mb-4">Un plato icónico tailandés de fideos de arroz salteados con camarones o pollo.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Tailandia</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>200g de fideos de arroz secos</li>
+                            <li>200g de camarones o pollo en tiras</li>
+                            <li>2 huevos</li>
+                            <li>1/4 taza de tamarindo concentrado</li>
+                            <li>2 cucharadas de salsa de pescado</li>
+                            <li>1 cucharada de azúcar de palma</li>
+                            <li>1 cucharadita de chile en polvo (opcional)</li>
+                            <li>Brotes de soja, cebolín, cacahuetes picados, lima para decorar</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Remojar los fideos de arroz en agua tibia hasta que estén blandos.</li>
+                            <li>En un wok o sartén grande, saltear los camarones/pollo hasta que estén cocidos. Retirar.</li>
+                            <li>En el mismo wok, hacer un espacio y cocinar los huevos revueltos.</li>
+                            <li>Añadir los fideos remojados, el tamarindo, la salsa de pescado y el azúcar de palma. Saltear bien.</li>
+                            <li>Incorporar los camarones/pollo cocidos, brotes de soja y cebollín. Mezclar.</li>
+                            <li>Servir caliente y decorar con cacahuetes picados y una rodaja de lima.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 8: Moussaka (Grecia) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Moussaka">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Moussaka</h3>
+                    <p class="text-gray-600 text-sm mb-4">Un delicioso gratinado griego de berenjenas, carne picada y salsa bechamel.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Grecia</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>2 berenjenas grandes</li>
+                            <li>500g de carne picada de cordero o res</li>
+                            <li>1 cebolla, picada</li>
+                            <li>2 dientes de ajo, picados</li>
+                            <li>1 lata (400g) de tomates triturados</li>
+                            <li>1/2 taza de vino tinto (opcional)</li>
+                            <li>Especias: canela, orégano, nuez mosca
+                            <li>Para la bechamel: 50g mantequilla, 50g harina, 500ml leche, 1 huevo, queso rallado</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Cortar las berenjenas en rodajas, salar y dejar reposar 30 min. Enjuagar y secar. Freír o asar hasta que estén tiernas.</li>
+                            <li>Sofreír cebolla y ajo. Añadir la carne picada y cocinar hasta dorar.</li>
+                            <li>Agregar tomates triturados, vino tinto y especias. Cocinar a fuego lento por 20 min.</li>
+                            <li>Preparar la bechamel: derretir mantequilla, añadir harina, cocinar 1 min. Incorporar leche gradualmente, batiendo hasta espesar. Retirar del fuego, añadir huevo batido y queso.</li>
+                            <li>En un molde, alternar capas de berenjena, carne y bechamel. Terminar con bechamel.</li>
+                            <li>Hornear a 180°C por 40-50 minutos, hasta que esté dorado y burbujeante.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 9: Ceviche (Perú) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Ceviche">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Ceviche</h3>
+                    <p class="text-gray-600 text-sm mb-4">Un plato fresco y vibrante de pescado "cocinado" en jugo de limón.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Perú</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>500g de pescado blanco fresco (corvina, lenguado), en cubos</li>
+                            <li>10-12 limones (jugo)</li>
+                            <li>1 cebolla morada, en julianas finas</li>
+                            <li>1 ají limo o rocoto, picado finamente (sin semillas para menos picante)</li>
+                            <li>Cilantro fresco, picado</li>
+                            <li>Sal y pimienta al gusto</li>
+                            <li>Lechuga, camote cocido y choclo (maíz) para acompañar</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>En un bol, colocar el pescado en cubos y salar.</li>
+                            <li>Añadir la cebolla morada y el ají limo.</li>
+                            <li>Verter el jugo de limón sobre el pescado, asegurándose de que quede cubierto.</li>
+                            <li>Refrigerar por 15-20 minutos, o hasta que el pescado cambie de color y se "cocine".</li>
+                            <li>Añadir el cilantro picado y mezclar suavemente.</li>
+                            <li>Servir inmediatamente sobre hojas de lechuga, acompañado de camote cocido y choclo.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 10: Goulash (Hungría) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Goulash">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Goulash</h3>
+                    <p class="text-gray-600 text-sm mb-4">Un estofado húngaro robusto y sabroso con carne de res y pimentón.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Hungría</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>700g de carne de res para estofado, en cubos</li>
+                            <li>2 cebollas grandes, picadas</li>
+                            <li>3 cucharadas de pimentón dulce húngaro</li>
+                            <li>1 cucharadita de comino molido</li>
+                            <li>1 lata (400g) de tomates triturados o pasta de tomate</li>
+                            <li>700ml de caldo de res</li>
+                            <li>2 papas medianas, en cubos (opcional)</li>
+                            <li>Aceite vegetal, sal y pimienta</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Secar la carne y dorar en aceite en una olla grande. Retirar.</li>
+                            <li>En la misma olla, sofreír las cebollas hasta que estén muy tiernas y doradas.</li>
+                            <li>Retirar del fuego, añadir el pimentón y el comino, mezclar rápidamente.</li>
+                            <li>Volver la carne a la olla. Añadir los tomates triturados (o pasta de tomate) y el caldo de res.</li>
+                            <li>Llevar a ebullición, luego reducir el fuego, tapar y cocinar a fuego lento por 2-3 horas, o hasta que la carne esté muy tierna.</li>
+                            <li>Si se usan papas, añadirlas la última hora de cocción. Ajustar sal y pimienta.</li>
+                            <li>Servir caliente, tradicionalmente con nokedli (ñoquis húngaros) o simplemente pan.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 11: Paella (España) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Paella">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Paella</h3>
+                    <p class="text-gray-600 text-sm mb-4">El famoso plato español de arroz, con mariscos, pollo y azafrán.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: España</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>300g de arroz bomba</li>
+                            <li>1 litro de caldo de pescado o pollo</li>
+                            <li>200g de pollo, en trozos</li>
+                            <li>200g de mariscos variados (gambas, mejillones, calamares)</li>
+                            <li>1 cebolla, 1 pimiento rojo, 2 dientes de ajo (picados)</li>
+                            <li>Tomate triturado, azafrán, pimentón dulce</li>
+                            <li>Aceite de oliva, sal, limón para servir</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>En una paellera, dorar el pollo en aceite de oliva. Retirar.</li>
+                            <li>Sofreír cebolla, pimiento y ajo. Añadir el tomate y pimentón.</li>
+                            <li>Incorporar el arroz y remover por un minuto. Añadir el azafrán disuelto en un poco de caldo.</li>
+                            <li>Verter el resto del caldo caliente. Distribuir el pollo y los mariscos.</li>
+                            <li>Cocinar a fuego medio-alto sin remover por 15-20 minutos, hasta que el arroz absorba el caldo.</li>
+                            <li>Dejar reposar unos minutos antes de servir con rodajas de limón.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 12: Croissant (Francia) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Croissant">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Croissant</h3>
+                    <p class="text-gray-600 text-sm mb-4">El clásico bollo de hojaldre francés, perfecto para el desayuno.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Francia</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>500g de harina de fuerza</li>
+                            <li>10g de sal, 50g de azúcar</li>
+                            <li>10g de levadura fresca</li>
+                            <li>150ml de leche fría, 150ml de agua fría</li>
+                            <li>250g de mantequilla sin sal (para el hojaldrado)</li>
+                            <li>1 huevo batido para dorar</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Mezclar harina, sal, azúcar y levadura. Añadir leche y agua. Amasar hasta obtener una masa homogénea. Refrigerar 30 min.</li>
+                            <li>Estirar la masa en un rectángulo. Colocar la mantequilla fría y aplanada en el centro. Doblar la masa para envolver la mantequilla.</li>
+                            <li>Realizar 3 "vueltas" (doblar la masa en tercios, estirar y repetir), refrigerando 30 min entre cada vuelta.</li>
+                            <li>Estirar la masa final a un grosor de 3-4mm. Cortar triángulos largos.</li>
+                            <li>Enrollar cada triángulo desde la base hacia la punta para formar el croissant. Curvar ligeramente las puntas.</li>
+                            <li>Dejar levar en un lugar cálido hasta que dupliquen su tamaño (1-2 horas).</li>
+                            <li>Pintar con huevo batido y hornear a 190°C por 15-20 minutos, hasta que estén dorados y crujientes.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 13: Pho (Vietnam) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Pho">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Pho</h3>
+                    <p class="text-gray-600 text-sm mb-4">La sopa de fideos vietnamita, aromática y reconfortante, con carne de res o pollo.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Vietnam</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>500g de huesos de res o pollo</li>
+                            <li>1 cebolla, 1 trozo de jengibre (asados)</li>
+                            <li>Especias: anís estrellado, canela, cardamomo, clavo</li>
+                            <li>Salsa de pescado, azúcar, sal</li>
+                            <li>Fideos de arroz planos</li>
+                            <li>Carne de res en láminas finas o pollo cocido desmenuzado</li>
+                            <li>Guarniciones: brotes de soja, albahaca, cilantro, lima, chiles</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Hervir los huesos, desechar el agua. Cubrir con agua fresca y añadir cebolla, jengibre y especias. Cocinar a fuego lento por 3-4 horas.</li>
+                            <li>Colar el caldo, desechar los sólidos. Sazonar con salsa de pescado, azúcar y sal.</li>
+                            <li>Cocinar los fideos de arroz según las instrucciones.</li>
+                            <li>En un bol, colocar fideos, carne y verter el caldo caliente.</li>
+                            <li>Servir con las guarniciones al lado para que cada uno se sirva a su gusto.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 14: Hummus (Medio Oriente) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Hummus">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Hummus</h3>
+                    <p class="text-gray-600 text-sm mb-4">Una crema untuosa de garbanzos, tahini, limón y ajo, perfecta para dipear.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Medio Oriente</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>1 lata (400g) de garbanzos cocidos, escurridos y enjuagados</li>
+                            <li>1/4 taza de tahini (pasta de sésamo)</li>
+                            <li>2 dientes de ajo, picados</li>
+                            <li>Jugo de 1 limón (o más, al gusto)</li>
+                            <li>2-4 cucharadas de agua fría (o agua de cocción de garbanzos)</li>
+                            <li>Sal al gusto</li>
+                            <li>Aceite de oliva, pimentón y perejil fresco para decorar</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>En un procesador de alimentos, combinar garbanzos, tahini, ajo, jugo de limón y sal.</li>
+                            <li>Procesar hasta obtener una pasta suave. Si es necesario, añadir agua fría poco a poco hasta alcanzar la consistencia deseada.</li>
+                            <li>Probar y ajustar el sabor (más limón, sal o tahini si es necesario).</li>
+                            <li>Servir en un plato, hacer un hueco en el centro, rociar con aceite de oliva y espolvorear pimentón y perejil picado.</li>
+                            <li>Acompañar con pan de pita, vegetales crudos o galletas saladas.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 15: Arepas (Venezuela/Colombia) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Arepas">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Arepas</h3>
+                    <p class="text-gray-600 text-sm mb-4">Panes de maíz versátiles, perfectos para rellenar con lo que quieras.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Venezuela/Colombia</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>2 tazas de harina de maíz precocida (Harina P.A.N.)</li>
+                            <li>2 1/2 tazas de agua tibia</li>
+                            <li>1 cucharadita de sal</li>
+                            <li>Relleno a elección: queso, aguacate, carne mechada, pollo desmenuzado</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>En un bol, mezclar el agua tibia con la sal hasta disolver.</li>
+                            <li>Añadir la harina de maíz poco a poco, mezclando con las manos hasta formar una masa homogénea y suave. Dejar reposar 5 minutos.</li>
+                            <li>Formar bolas con la masa y aplanarlas para crear discos de unos 1.5 cm de grosor.</li>
+                            <li>Cocinar las arepas en un sartén caliente (budare o plancha) por unos 5-7 minutos por cada lado, hasta que estén doradas y formen una costra.</li>
+                            <li>Terminar de cocinar en el horno precalentado a 180°C por 10-15 minutos, o hasta que estén cocidas por dentro.</li>
+                            <li>Abrir las arepas por la mitad con un cuchillo y rellenar al gusto.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 16: Baklava (Turquía/Medio Oriente) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Baklava">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Baklava</h3>
+                    <p class="text-gray-600 text-sm mb-4">Un postre dulce y crujiente de capas de masa filo, nueces y almíbar.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Turquía/Medio Oriente</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>1 paquete de masa filo (descongelada)</li>
+                            <li>200g de nueces, picadas</li>
+                            <li>100g de almendras, picadas</li>
+                            <li>1 cucharadita de canela molida</li>
+                            <li>200g de mantequilla sin sal, derretida</li>
+                            <li>Para el almíbar: 2 tazas de azúcar, 1 taza de agua, jugo de 1/2 limón, 1 ramita de canela</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Precalentar el horno a 160°C.</li>
+                            <li>Mezclar las nueces, almendras y canela.</li>
+                            <li>Engrasar un molde para hornear. Colocar la mitad de las hojas de filo, pintando cada una con mantequilla derretida.</li>
+                            <li>Extender la mezcla de nueces sobre el filo. Cubrir con el resto de las hojas de filo, pintando cada una con mantequilla.</li>
+                            <li>Cortar el baklava en rombos o cuadrados antes de hornear.</li>
+                            <li>Hornear por 45-60 minutos, hasta que esté dorado y crujiente.</li>
+                            <li>Mientras se hornea, preparar el almíbar: hervir azúcar, agua, jugo de limón y canela por 10 minutos.</li>
+                            <li>Una vez horneado, verter el almíbar frío sobre el baklava caliente. Dejar reposar por varias horas o toda la noche antes de servir.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 17: Gazpacho (España) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Gazpacho">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Gazpacho</h3>
+                    <p class="text-gray-600 text-sm mb-4">Una sopa fría de tomate y vegetales, refrescante y perfecta para el verano.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: España</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>1 kg de tomates maduros</li>
+                            <li>1 pepino, 1 pimiento verde, 1/2 cebolla pequeña</li>
+                            <li>1 diente de ajo</li>
+                            <li>50g de pan duro (remojado en agua)</li>
+                            <li>50ml de aceite de oliva virgen extra</li>
+                            <li>2 cucharadas de vinagre de Jerez</li>
+                            <li>Sal al gusto</li>
+                            <li>Agua fría (opcional, para ajustar la consistencia)</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Lavar y trocear los tomates, pepino, pimiento y cebolla. Pelar el ajo.</li>
+                            <li>En una batidora potente, combinar todos los vegetales, el pan remojado y escurrido, el aceite de oliva, el vinagre y la sal.</li>
+                            <li>Triturar hasta obtener una sopa muy fina y homogénea. Si es necesario, añadir un poco de agua fría para ajustar la consistencia.</li>
+                            <li>Pasar por un colador fino para eliminar pieles y semillas (opcional, para una textura más suave).</li>
+                            <li>Refrigerar por al menos 2 horas antes de servir, para que esté bien frío.</li>
+                            <li>Servir en cuencos, acompañado de picatostes, pepino o pimiento picado.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 18: Kimchi (Corea) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Kimchi">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Kimchi</h3>
+                    <p class="text-gray-600 text-sm mb-4">El famoso acompañamiento coreano de col fermentada y especias.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Corea</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>1 col napa grande</li>
+                            <li>1/2 taza de sal marina gruesa</li>
+                            <li>Para la pasta de kimchi: 1/4 taza de hojuelas de chile coreano (gochugaru), 2 cucharadas de ajo picado, 1 cucharada de jengibre rallado, 1 cucharada de azúcar, 2 cucharadas de salsa de pescado (opcional), 1/4 taza de arroz glutinoso cocido (opcional)</li>
+                            <li>1 zanahoria, 1 cebolleta (cortadas finamente)</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Cortar la col en trozos grandes, salar y dejar reposar por 2-3 horas, o hasta que esté blanda. Enjuagar y escurrir bien.</li>
+                            <li>Preparar la pasta de kimchi: mezclar todos los ingredientes de la pasta.</li>
+                            <li>En un bol grande, mezclar la col escurrida con la pasta de kimchi y las zanahorias y cebolletas. Usar guantes para mezclar bien.</li>
+                            <li>Empacar el kimchi firmemente en un frasco esterilizado, dejando un espacio en la parte superior.</li>
+                            <li>Dejar fermentar a temperatura ambiente por 1-3 días (o más, al gusto), luego refrigerar.</li>
+                            <li>Servir como acompañamiento con casi cualquier plato coreano.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 19: Tiramisú (Italia) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Tiramisú">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Tiramisú</h3>
+                    <p class="text-gray-600 text-sm mb-4">El clásico postre italiano de café, mascarpone y bizcochos de soletilla.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Italia</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>250g de queso mascarpone</li>
+                            <li>2 huevos grandes (separar yemas y claras)</li>
+                            <li>75g de azúcar</li>
+                            <li>200ml de café espresso frío</li>
+                            <li>200g de bizcochos de soletilla (ladyfingers)</li>
+                            <li>Cacao en polvo sin azúcar para espolvorear</li>
+                            <li>Un chorrito de licor de café o amaretto (opcional)</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>En un bol, batir las yemas con el azúcar hasta que estén pálidas y cremosas.</li>
+                            <li>Añadir el mascarpone y mezclar suavemente hasta integrar.</li>
+                            <li>En otro bol, batir las claras a punto de nieve. Incorporarlas suavemente a la mezcla de mascarpone.</li>
+                            <li>Mezclar el café frío con el licor (si se usa).</li>
+                            <li>Mojar rápidamente los bizcochos de soletilla en el café, sin empaparlos demasiado.</li>
+                            <li>En un molde, colocar una capa de bizcochos, luego una capa de crema de mascarpone. Repetir las capas.</li>
+                            <li>Refrigerar por al menos 4 horas o preferiblemente toda la noche.</li>
+                            <li>Antes de servir, espolvorear generosamente con cacao en polvo.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 20: Falafel (Medio Oriente) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Falafel">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Falafel</h3>
+                    <p class="text-gray-600 text-sm mb-4">Deliciosas croquetas de garbanzos especiados, fritas hasta quedar crujientes.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Medio Oriente</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>250g de garbanzos secos (remojados durante la noche)</li>
+                            <li>1 cebolla pequeña, 2 dientes de ajo</li>
+                            <li>Puñado de perejil fresco, puñado de cilantro fresco</li>
+                            <li>Especias: comino molido, cilantro molido, pimienta de cayena (opcional)</li>
+                            <li>1/2 cucharadita de bicarbonato de sodio</li>
+                            <li>Sal al gusto</li>
+                            <li>Aceite vegetal para freír</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Escurrir bien los garbanzos remojados. No cocinarlos.</li>
+                            <li>En un procesador de alimentos, combinar los garbanzos, cebolla, ajo, perejil, cilantro y especias. Triturar hasta obtener una mezcla gruesa, no una pasta.</li>
+                            <li>Añadir el bicarbonato de sodio y la sal. Mezclar bien.</li>
+                            <li>Formar pequeñas bolas o discos con la mezcla.</li>
+                            <li>Calentar abundante aceite en una sartén profunda a fuego medio-alto.</li>
+                            <li>Freír los falafels por tandas hasta que estén dorados y crujientes por fuera. Retirar y escurrir sobre papel de cocina.</li>
+                            <li>Servir caliente en pan de pita con salsa tahini, ensalada y vegetales.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 21: Chili con Carne (Estados Unidos/México) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Chili con Carne">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Chili con Carne</h3>
+                    <p class="text-gray-600 text-sm mb-4">Un guiso robusto y picante de carne molida, frijoles y chiles.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Estados Unidos/México</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>500g de carne molida de res</li>
+                            <li>1 cebolla, 1 pimiento (picados)</li>
+                            <li>2 dientes de ajo, picados</li>
+                            <li>1 lata (400g) de frijoles rojos o pintos (escurridos)</li>
+                            <li>1 lata (400g) de tomates triturados</li>
+                            <li>1 taza de caldo de res</li>
+                            <li>Especias: chile en polvo, comino, orégano, pimentón ahumado</li>
+                            <li>Aceite vegetal, sal, pimienta</li>
+                            <li>Guarniciones: queso rallado, crema agria, cilantro, totopos</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>En una olla grande, dorar la carne molida. Escurrir el exceso de grasa.</li>
+                            <li>Añadir cebolla, pimiento y ajo. Sofreír hasta que estén tiernos.</li>
+                            <li>Incorporar las especias y cocinar por 1 minuto.</li>
+                            <li>Agregar los frijoles, tomates triturados y caldo de res.</li>
+                            <li>Llevar a ebullición, luego reducir el fuego, tapar y cocinar a fuego lento por al menos 30 minutos (o más para más sabor).</li>
+                            <li>Ajustar sal y pimienta. Servir caliente con las guarniciones deseadas.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 22: Crepes (Francia) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Crepes">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Crepes</h3>
+                    <p class="text-gray-600 text-sm mb-4">Delgadas y versátiles tortitas francesas, dulces o saladas.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Francia</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>1 taza de harina de trigo</li>
+                            <li>2 huevos grandes</li>
+                            <li>1/2 taza de leche</li>
+                            <li>1/2 taza de agua</li>
+                            <li>1/4 cucharadita de sal</li>
+                            <li>2 cucharadas de mantequilla derretida (más extra para la sartén)</li>
+                            <li>1 cucharada de azúcar (opcional, para crepes dulces)</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>En un bol grande, batir la harina, huevos, leche, agua, sal y azúcar (si se usa) hasta obtener una masa suave.</li>
+                            <li>Añadir la mantequilla derretida y mezclar. Dejar reposar la masa por al menos 30 minutos (o toda la noche en la nevera).</li>
+                            <li>Calentar una sartén antiadherente a fuego medio y engrasar ligeramente con mantequilla.</li>
+                            <li>Verter un cucharón pequeño de masa en el centro de la sartén y mover la sartén para que la masa cubra toda la superficie en una capa fina.</li>
+                            <li>Cocinar por 1-2 minutos hasta que los bordes se doren y la superficie burbujee. Dar la vuelta y cocinar por 30 segundos más.</li>
+                            <li>Retirar y repetir con el resto de la masa.</li>
+                            <li>Servir con rellenos dulces (Nutella, frutas, nata) o salados (jamón y queso, champiñones).</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 23: Tteokbokki (Corea) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Tteokbokki">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Tteokbokki</h3>
+                    <p class="text-gray-600 text-sm mb-4">Pastelitos de arroz coreanos picantes y masticables en una salsa dulce y sabrosa.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Corea</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>300g de tteok (pastelitos de arroz coreanos)</li>
+                            <li>2 tazas de caldo de anchoas o vegetal</li>
+                            <li>2-3 cucharadas de gochujang (pasta de chile coreana)</li>
+                            <li>1 cucharada de gochugaru (hojuelas de chile coreano, opcional)</li>
+                            <li>1 cucharada de azúcar</li>
+                            <li>1 cebolleta, cortada en trozos grandes</li>
+                            <li>Pastel de pescado coreano (eomuk), opcional</li>
+                            <li>Huevo duro, queso derretido para servir (opcional)</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Si los tteok están duros, remojarlos en agua tibia por 10-15 minutos.</li>
+                            <li>En una olla, combinar el caldo, gochujang, gochugaru y azúcar. Llevar a ebullición.</li>
+                            <li>Añadir los tteok y cocinar a fuego medio, revolviendo ocasionalmente, hasta que los tteok estén tiernos y la salsa espese (unos 8-10 minutos).</li>
+                            <li>Agregar la cebolleta y el pastel de pescado (si se usa). Cocinar por 2-3 minutos más.</li>
+                            <li>Servir caliente, opcionalmente con huevo duro y queso derretido.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 24: Chilli Crab (Singapur) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Chilli Crab">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Chilli Crab</h3>
+                    <p class="text-gray-600 text-sm mb-4">Cangrejo salteado en una salsa dulce, salada y picante, plato nacional de Singapur.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Singapur</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>1 cangrejo grande (aprox. 1 kg), limpio y troceado</li>
+                            <li>1 cebolla, 2 dientes de ajo, 1 trozo de jengibre, 2 chiles rojos (para la pasta base)</li>
+                            <li>1/2 taza de salsa de tomate, 2 cucharadas de salsa de chile</li>
+                            <li>1 cucharada de azúcar, 1 cucharada de vinagre de arroz</li>
+                            <li>1 huevo batido</li>
+                            <li>Aceite vegetal, cilantro fresco para decorar</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Blanquear el cangrejo en agua hirviendo por 2-3 minutos. Escurrir.</li>
+                            <li>Licuar cebolla, ajo, jengibre y chiles para hacer una pasta.</li>
+                            <li>En un wok o sartén grande, sofreír la pasta base en aceite hasta que esté aromática.</li>
+                            <li>Añadir salsa de tomate, salsa de chile, azúcar y vinagre. Mezclar bien.</li>
+                            <li>Incorporar el cangrejo y cocinar, revolviendo, hasta que el cangrejo esté cocido y cubierto con la salsa.</li>
+                            <li>Reducir el fuego y añadir el huevo batido en un hilo fino, revolviendo constantemente para crear hebras en la salsa.</li>
+                            <li>Servir caliente, decorado con cilantro fresco. Ideal con pan mantou para mojar en la salsa.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 25: Poutine (Canadá) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Poutine">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Poutine</h3>
+                    <p class="text-gray-600 text-sm mb-4">El plato canadiense de papas fritas, queso en grano y salsa gravy.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Canadá</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>500g de papas, cortadas para papas fritas</li>
+                            <li>200g de queso en grano (cheese curds)</li>
+                            <li>Para la salsa gravy: 2 cucharadas de mantequilla, 2 cucharadas de harina, 2 tazas de caldo de res, sal y pimienta</li>
+                            <li>Aceite para freír</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Freír las papas en aceite caliente hasta que estén doradas y crujientes. Escurrir y salar.</li>
+                            <li>Mientras, preparar la salsa gravy: derretir la mantequilla en una olla, añadir la harina y cocinar por 1 minuto.</li>
+                            <li>Gradualmente, incorporar el caldo de res, batiendo constantemente para evitar grumos. Cocinar hasta que espese. Sazonar con sal y pimienta.</li>
+                            <li>En un plato, colocar una porción generosa de papas fritas calientes.</li>
+                            <li>Distribuir el queso en grano sobre las papas.</li>
+                            <li>Verter la salsa gravy caliente sobre el queso y las papas, asegurándose de que el queso se derrita ligeramente.</li>
+                            <li>Servir inmediatamente.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 26: Lasaña (Italia) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Lasaña">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Lasaña</h3>
+                    <p class="text-gray-600 text-sm mb-4">Un plato clásico italiano de capas de pasta, carne y queso.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Italia</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>Hojas de lasaña</li>
+                            <li>500g de carne picada</li>
+                            <li>Salsa de tomate, cebolla, ajo</li>
+                            <li>Queso mozzarella, parmesano</li>
+                            <li>Salsa bechamel</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Preparar la salsa boloñesa y la bechamel.</li>
+                            <li>En un molde, alternar capas de pasta, boloñesa, bechamel y quesos.</li>
+                            <li>Hornear hasta que esté dorado y burbujeante.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 27: Ramen (Japón) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Ramen">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Ramen</h3>
+                    <p class="text-gray-600 text-sm mb-4">Sopa de fideos japonesa con caldo rico y variados toppings.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Japón</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>Fideos de ramen</li>
+                            <li>Caldo de cerdo o pollo</li>
+                            <li>Carne de cerdo (chashu), huevo cocido</li>
+                            <li>Algas nori, cebolleta, brotes de bambú</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Preparar el caldo y los toppings.</li>
+                            <li>Cocinar los fideos.</li>
+                            <li>Montar el ramen en un bol con fideos, caldo y toppings.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 28: Kebab (Turquía) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Kebab">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Kebab</h3>
+                    <p class="text-gray-600 text-sm mb-4">Carne asada en un espetón vertical, servida en pan con vegetales.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Turquía</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>Carne de cordero o pollo</li>
+                            <li>Pan de pita o lavash</li>
+                            <li>Tomate, cebolla, lechuga</li>
+                            <li>Salsa de yogur o picante</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Marinar y asar la carne.</li>
+                            <li>Cortar la carne en láminas finas.</li>
+                            <li>Rellenar el pan con carne y vegetales.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 29: Pierogi (Polonia) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Pierogi">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Pierogi</h3>
+                    <p class="text-gray-600 text-sm mb-4">Empanadillas rellenas de masa, populares en Europa del Este.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Polonia</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>Harina, huevos, agua (para la masa)</li>
+                            <li>Relleno: patata y queso, carne, chucrut</li>
+                            <li>Mantequilla, cebolla frita para servir</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Preparar la masa y el relleno.</li>
+                            <li>Formar las empanadillas y cocerlas en agua hirviendo.</li>
+                            <li>Saltear en mantequilla y servir con cebolla frita.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta Nueva: Pão de Queijo (Brasil) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Pão de Queijo">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Pão de Queijo</h3>
+                    <p class="text-gray-600 text-sm mb-4">Pequeños y deliciosos panes de queso brasileños, crujientes por fuera y suaves por dentro.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Brasil</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>250g de almidón de yuca agrio (polvilho azedo)</li>
+                            <li>250g de almidón de yuca dulce (polvilho doce)</li>
+                            <li>1 taza de leche</li>
+                            <li>1/2 taza de aceite vegetal</li>
+                            <li>1 cucharadita de sal</li>
+                            <li>2 huevos grandes</li>
+                            <li>200g de queso rallado (media cura o parmesano)</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>En una olla, calentar la leche, el aceite y la sal hasta que hierva.</li>
+                            <li>En un bol grande, mezclar los dos tipos de almidón. Verter la mezcla caliente de leche sobre el almidón, revolviendo bien para escaldarlo. Dejar enfriar un poco.</li>
+                            <li>Añadir los huevos uno a uno, mezclando bien después de cada adición.</li>
+                            <li>Incorporar el queso rallado y amasar hasta obtener una masa homogénea y pegajosa.</li>
+                            <li>Formar pequeñas bolitas con las manos.</li>
+                            <li>Colocar en una bandeja para hornear y hornear en horno precalentado a 180°C por 20-25 minutos, o hasta que estén dorados y esponjosos.</li>
+                            <li>Servir caliente.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 31: Sopa de Miso (Japón) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Sopa de Miso">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Sopa de Miso</h3>
+                    <p class="text-gray-600 text-sm mb-4">Una sopa japonesa ligera y sabrosa a base de pasta de miso.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Japón</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>4 tazas de caldo dashi</li>
+                            <li>3 cucharadas de pasta de miso</li>
+                            <li>100g de tofu firme, en cubos</li>
+                            <li>Alga wakame seca</li>
+                            <li>Cebolleta picada para decorar</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Calentar el caldo dashi a fuego medio.</li>
+                            <li>Disolver la pasta de miso en un poco de caldo caliente y luego añadirla al resto del caldo (no hervir el miso).</li>
+                            <li>Añadir el tofu y el wakame (previamente hidratado si es necesario).</li>
+                            <li>Cocinar por unos minutos hasta que el tofu esté caliente.</li>
+                            <li>Servir inmediatamente, decorado con cebolleta picada.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 32: Tabbouleh (Medio Oriente) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Tabbouleh">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Tabbouleh</h3>
+                    <p class="text-gray-600 text-sm mb-4">Una ensalada fresca y aromática de bulgur, tomate, pepino y hierbas.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Medio Oriente</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>1 taza de bulgur fino</li>
+                            <li>2 tomates maduros, picados</li>
+                            <li>1 pepino, picado</li>
+                            <li>1 manojo grande de perejil fresco, picado</li>
+                            <li>1/2 manojo de menta fresca, picada</li>
+                            <li>Jugo de 2 limones</li>
+                            <li>1/4 taza de aceite de oliva virgen extra</li>
+                            <li>Sal y pimienta al gusto</li>
+                            <li>Agua fría (opcional, para ajustar la consistencia)</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Remojar el bulgur en agua fría por 15-20 minutos, luego escurrir muy bien.</li>
+                            <li>En un bol grande, combinar el bulgur escurrido con los tomates, pepino, perejil y menta.</li>
+                            <li>Aderezar con jugo de limón, aceite de oliva, sal y pimienta.</li>
+                            <li>Mezclar bien y dejar reposar por al menos 30 minutos antes de servir para que los sabores se mezclen.</li>
+                            <li>Servir frío como acompañamiento o plato ligero.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 35: Tom Yum Goong (Tailandia) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Tom Yum Goong">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Tom Yum Goong</h3>
+                    <p class="text-gray-600 text-sm mb-4">Sopa tailandesa picante y agria con camarones, hierba limón y galanga.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Tailandia</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>Caldo de pollo o vegetal</li>
+                            <li>Camarones</li>
+                            <li>Hierba limón, galanga, hojas de lima kaffir</li>
+                            <li>Chiles, salsa de pescado, jugo de lima</li>
+                            <li>Champiñones, cilantro</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Hervir el caldo con hierba limón, galanga y hojas de lima.</li>
+                            <li>Añadir camarones y champiñones, cocinar hasta que los camarones estén rosados.</li>
+                            <li>Sazonar con chiles, salsa de pescado y jugo de lima. Servir con cilantro.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 36: Tostadas Francesas (Francia) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Tostadas Francesas">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Tostadas Francesas</h3>
+                    <p class="text-gray-600 text-sm mb-4">Pan empapado en huevo y leche, frito y servido con sirope y frutas.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Francia</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>Pan de molde grueso</li>
+                            <li>Huevos, leche, azúcar, canela</li>
+                            <li>Mantequilla para freír</li>
+                            <li>Sirope de arce, frutas frescas para servir</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Batir huevos, leche, azúcar y canela.</li>
+                            <li>Remojar las rebanadas de pan en la mezcla.</li>
+                            <li>Freír en mantequilla hasta dorar.</li>
+                            <li>Servir con sirope y frutas.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 37: Enchiladas (México) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Enchiladas">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Enchiladas</h3>
+                    <p class="text-gray-600 text-sm mb-4">Tortillas de maíz rellenas, cubiertas con salsa de chile y queso.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: México</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>Tortillas de maíz</li>
+                            <li>Carne deshebrada o pollo</li>
+                            <li>Salsa de enchilada, queso rallado</li>
+                            <li>Cebolla, cilantro, crema (para servir)</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Rellenar las tortillas con carne y enrollar.</li>
+                            <li>Colocar en un molde, cubrir con salsa y queso.</li>
+                            <li>Hornear hasta que el queso se derrita y burbujee.</li>
+                            <li>Servir con cebolla, cilantro y crema.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 38: Bruschetta (Italia) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Bruschetta">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Bruschetta</h3>
+                    <p class="text-gray-600 text-sm mb-4">Pan tostado con tomate fresco, albahaca y ajo.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Italia</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>Pan rústico, rebanado</li>
+                            <li>Tomates cherry, picados</li>
+                            <li>Ajo, albahaca fresca</li>
+                            <li>Aceite de oliva virgen extra, sal, pimienta</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Tostar las rebanadas de pan. Frotar con un diente de ajo.</li>
+                            <li>Mezclar tomates, albahaca, aceite, sal y pimienta.</li>
+                            <li>Colocar la mezcla sobre el pan tostado.</li>
+                            <li>Servir inmediatamente.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 39: Gyoza (Japón) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Gyoza">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Gyoza</h3>
+                    <p class="text-gray-600 text-sm mb-4">Empanadillas japonesas rellenas de carne y vegetales, cocidas al vapor y luego fritas.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Japón</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>Masas para gyoza</li>
+                            <li>Carne de cerdo picada, col, cebolleta</li>
+                            <li>Jengibre, ajo, salsa de soja, aceite de sésamo</li>
+                            <li>Agua, aceite para cocinar</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Mezclar los ingredientes del relleno.</li>
+                            <li>Rellenar las masas de gyoza y sellar.</li>
+                            <li>Cocinar en una sartén con un poco de aceite, añadir agua y tapar para cocinar al vapor.</li>
+                            <li>Destapar y freír hasta que la base esté crujiente.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 40: Panna Cotta (Italia) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Panna Cotta">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Panna Cotta</h3>
+                    <p class="text-gray-600 text-sm mb-4">Un postre italiano cremoso a base de nata, azúcar y gelatina.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Italia</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>500ml de nata para montar</li>
+                            <li>100g de azúcar</li>
+                            <li>1 vaina de vainilla o extracto</li>
+                            <li>2 hojas de gelatina (o 4g de gelatina en polvo)</li>
+                            <li>Salsa de frutos rojos o caramelo para servir</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Hidratar la gelatina en agua fría.</li>
+                            <li>Calentar la nata, azúcar y vainilla a fuego medio hasta que el azúcar se disuelva. No hervir.</li>
+                            <li>Retirar del fuego, añadir la gelatina escurrida y remover hasta disolver.</li>
+                            <li>Verter en moldes individuales y refrigerar por al menos 4 horas.</li>
+                            <li>Desmoldar y servir con salsa de frutos rojos o caramelo.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 41: Empanadas (Argentina) -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                <div class="image-loading" data-recipe-name="Empanadas">Cargando imagen...</div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Empanadas</h3>
+                    <p class="text-gray-600 text-sm mb-4">Deliciosas masas rellenas, horneadas o fritas, populares en Latinoamérica.</p>
+                    <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                    <div class="recipe-card-details mt-4 text-gray-700">
+                        <p class="font-semibold text-blue-600 mb-2">Origen: Argentina</p>
+                        <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>Discos de empanada</li>
+                            <li>Relleno: carne picada, cebolla, huevo duro, aceitunas, pasas (opcional)</li>
+                            <li>Especias: comino, pimentón, ají molido</li>
+                        </ul>
+                        <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Preparar el relleno de carne, dejar enfriar.</li>
+                            <li>Rellenar los discos de empanada, cerrar con un repulgue.</li>
+                            <li>Hornear o freír hasta que estén doradas.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Postres -->
+        <section class="mt-16">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-8">Dulces Tentaciones: Sección de Postres</h2>
+            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-8">Termina tu comida con broche de oro o simplemente date un gusto con estas deliciosas recetas de postres de todo el mundo.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Postre 1: Crème brûlée (Francia) -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                    <div class="image-loading" data-recipe-name="Crème brûlée">Cargando imagen...</div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-2">Crème brûlée</h3>
+                        <p class="text-gray-600 text-sm mb-4">Un postre francés clásico con una rica crema de vainilla y una capa de azúcar caramelizado.</p>
+                        <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                        <div class="recipe-card-details mt-4 text-gray-700">
+                            <p class="font-semibold text-blue-600 mb-2">Origen: Francia</p>
+                            <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                            <ul class="list-disc list-inside space-y-1 text-sm">
+                                <li>500ml de nata para montar</li>
+                                <li>5 yemas de huevo grandes</li>
+                                <li>100g de azúcar granulada (más extra para caramelizar)</li>
+                                <li>1 vaina de vainilla (o 1 cucharadita de extracto de vainilla)</li>
+                            </ul>
+                            <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                            <ol class="list-decimal list-inside space-y-1 text-sm">
+                                <li>Precalentar el horno a 150°C. Colocar 4 ramequines en una bandeja para hornear.</li>
+                                <li>En una olla, calentar la nata con la vaina de vainilla (abierta y raspada) hasta que esté a punto de hervir. Retirar del fuego y dejar infusionar 15 minutos.</li>
+                                <li>En un bol, batir las yemas con el azúcar hasta que estén pálidas y cremosas.</li>
+                                <li>Retirar la vaina de vainilla de la nata. Verter la nata caliente poco a poco sobre la mezcla de yemas, batiendo constantemente.</li>
+                                <li>Colar la mezcla para asegurar una textura suave.</li>
+                                <li>Verter la crema en los ramequines. Llenar la bandeja con agua caliente hasta la mitad de la altura de los ramequines.</li>
+                                <li>Hornear por 30-40 minutos, o hasta que los bordes estén firmes y el centro ligeramente tembloroso.</li>
+                                <li>Retirar del horno y del baño maría. Dejar enfriar a temperatura ambiente y luego refrigerar por al menos 4 horas.</li>
+                                <li>Justo antes de servir, espolvorear una capa fina de azúcar sobre cada crème brûlée y caramelizar con un soplete de cocina hasta que esté dorado y crujiente.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Postre 2: Churros con Chocolate (España) -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                    <div class="image-loading" data-recipe-name="Churros con Chocolate">Cargando imagen...</div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-2">Churros con Chocolate</h3>
+                        <p class="text-gray-600 text-sm mb-4">Crujientes churros fritos, perfectos para mojar en un espeso chocolate caliente.</p>
+                        <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                        <div class="recipe-card-details mt-4 text-gray-700">
+                            <p class="font-semibold text-blue-600 mb-2">Origen: España</p>
+                            <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                            <ul class="list-disc list-inside space-y-1 text-sm">
+                                <li>250ml de agua</li>
+                                <li>150g de harina de trigo</li>
+                                <li>1/2 cucharadita de sal</li>
+                                <li>Aceite vegetal para freír</li>
+                                <li>Azúcar y canela para espolvorear</li>
+                                <li>Para el chocolate: 100g de chocolate negro, 200ml de leche, 1 cucharada de maicena</li>
+                            </ul>
+                            <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                            <ol class="list-decimal list-inside space-y-1 text-sm">
+                                <li>Para los churros: Calentar el agua con la sal hasta que hierva. Retirar del fuego y añadir la harina de golpe, mezclando vigorosamente hasta formar una bola de masa.</li>
+                                <li>Colocar la masa en una manga pastelera con boquilla de estrella grande.</li>
+                                <li>Calentar abundante aceite en una sartén profunda a 180°C.</li>
+                                <li>Formar los churros directamente en el aceite caliente, cortándolos con unas tijeras. Freír hasta que estén dorados y crujientes.</li>
+                                <li>Retirar y escurrir sobre papel de cocina. Espolvorear con azúcar y canela.</li>
+                                <li>Para el chocolate: Calentar la leche en una olla. Disolver la maicena en un poco de leche fría y añadir a la olla.</li>
+                                <li>Incorporar el chocolate troceado y remover hasta que se derrita y la mezcla espese.</li>
+                                <li>Servir los churros calientes con el chocolate.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Postre 3: Mango Sticky Rice (Tailandia) -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                    <div class="image-loading" data-recipe-name="Mango Sticky Rice">Cargando imagen...</div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-2">Mango Sticky Rice</h3>
+                        <p class="text-gray-600 text-sm mb-4">Un postre tailandés dulce y tropical con arroz glutinoso, mango fresco y leche de coco.</p>
+                        <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                        <div class="recipe-card-details mt-4 text-gray-700">
+                            <p class="font-semibold text-blue-600 mb-2">Origen: Tailandia</p>
+                            <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                            <ul class="list-disc list-inside space-y-1 text-sm">
+                                <li>1 taza de arroz glutinoso (sticky rice)</li>
+                                <li>1 lata (400ml) de leche de coco</li>
+                                <li>1/2 taza de azúcar</li>
+                                <li>1/2 cucharadita de sal</li>
+                                <li>2 mangos maduros frescos</li>
+                                <li>Semillas de sésamo tostadas o frijoles mungo fritos para decorar (opcional)</li>
+                            </ul>
+                            <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                            <ol class="list-decimal list-inside space-y-1 text-sm">
+                                <li>Lavar el arroz glutinoso hasta que el agua salga clara. Remojar por al menos 30 minutos (idealmente 2-3 horas).</li>
+                                <li>Cocinar el arroz al vapor por 20-25 minutos, o hasta que esté tierno y translúcido.</li>
+                                <li>Mientras el arroz se cocina, calentar 3/4 de la leche de coco con el azúcar y la sal en una olla a fuego medio, revolviendo hasta que el azúcar se disuelva. No hervir.</li>
+                                <li>Una vez cocido el arroz, pasarlo a un bol y verter la mezcla de leche de coco caliente sobre él. Mezclar bien y tapar. Dejar reposar por 15-20 minutos para que el arroz absorba la leche.</li>
+                                <li>Pelar y cortar los mangos en rebanadas.</li>
+                                <li>Servir el arroz pegajoso tibio con las rebanadas de mango fresco. Rociar con el resto de la leche de coco y decorar con semillas de sésamo o frijoles mungo.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Postre 4: Scones con crema y mermelada (Reino Unido) -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                    <div class="image-loading" data-recipe-name="Scones">Cargando imagen...</div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-2">Scones con crema y mermelada</h3>
+                        <p class="text-gray-600 text-sm mb-4">Bollos suaves y esponjosos, perfectos para el té de la tarde, servidos con nata y mermelada.</p>
+                        <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                        <div class="recipe-card-details mt-4 text-gray-700">
+                            <p class="font-semibold text-blue-600 mb-2">Origen: Reino Unido</p>
+                            <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                            <ul class="list-disc list-inside space-y-1 text-sm">
+                                <li>225g de harina de trigo</li>
+                                <li>1 cucharadita de polvo para hornear</li>
+                                <li>1/4 cucharadita de sal</li>
+                                <li>50g de mantequilla fría, en cubos</li>
+                                <li>25g de azúcar</li>
+                                <li>150ml de leche</li>
+                                <li>Nata (clotted cream) y mermelada para servir</li>
+                            </ul>
+                            <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                            <ol class="list-decimal list-inside space-y-1 text-sm">
+                                <li>Precalentar el horno a 220°C.</li>
+                                <li>En un bol, tamizar la harina, el polvo para hornear y la sal.</li>
+                                <li>Añadir la mantequilla fría y frotar con las yemas de los dedos hasta obtener una textura de migas.</li>
+                                <li>Incorporar el azúcar. Hacer un hueco en el centro y verter la leche poco a poco, mezclando hasta formar una masa suave y ligeramente pegajosa. No amasar en exceso.</li>
+                                <li>Estirar la masa sobre una superficie enharinada hasta un grosor de 2-3 cm. Cortar círculos con un cortador de galletas.</li>
+                                <li>Colocar los scones en una bandeja para hornear. Si se desea, pintar la parte superior con un poco de leche.</li>
+                                <li>Hornear por 12-15 minutos, o hasta que estén dorados y hayan subido.</li>
+                                <li>Servir tibios, partidos por la mitad, con una generosa porción de nata y mermelada.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Postre 5: Alfajores de Maicena (Argentina) -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                    <div class="image-loading" data-recipe-name="Alfajores de Maicena">Cargando imagen...</div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-2">Alfajores de Maicena</h3>
+                        <p class="text-gray-600 text-sm mb-4">Galletas suaves de maicena rellenas de dulce de leche y cubiertas con coco rallado.</p>
+                        <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                        <div class="recipe-card-details mt-4 text-gray-700">
+                            <p class="font-semibold text-blue-600 mb-2">Origen: Argentina</p>
+                            <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                            <ul class="list-disc list-inside space-y-1 text-sm">
+                                <li>200g de mantequilla sin sal, a temperatura ambiente</li>
+                                <li>150g de azúcar impalpable (azúcar glas)</li>
+                                <li>3 yemas de huevo</li>
+                                <li>1 cucharadita de extracto de vainilla</li>
+                                <li>200g de maicena (fécula de maíz)</li>
+                                <li>100g de harina de trigo</li>
+                                <li>1 cucharadita de polvo para hornear</li>
+                                <li>Dulce de leche para rellenar</li>
+                                <li>Coco rallado para decorar</li>
+                            </ul>
+                            <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                            <ol class="list-decimal list-inside space-y-1 text-sm">
+                                <li>En un bol, batir la mantequilla con el azúcar impalpable hasta que esté cremosa.</li>
+                                <li>Añadir las yemas de huevo una a una, batiendo bien después de cada adición. Incorporar el extracto de vainilla.</li>
+                                <li>En otro bol, tamizar la maicena, la harina y el polvo para hornear.</li>
+                                <li>Incorporar los ingredientes secos a la mezcla húmeda, mezclando con las manos hasta formar una masa suave y homogénea. No amasar en exceso.</li>
+                                <li>Estirar la masa sobre una superficie ligeramente enharinada hasta un grosor de unos 5mm. Cortar círculos con un cortador de galletas.</li>
+                                <li>Colocar las galletas en una bandeja para hornear forrada con papel de horno.</li>
+                                <li>Hornear en horno precalentado a 160°C por 10-12 minutos, o hasta que los bordes estén ligeramente dorados (el centro debe permanecer pálido).</li>
+                                <li>Dejar enfriar completamente sobre una rejilla.</li>
+                                <li>Una vez frías, unir dos galletas con una capa generosa de dulce de leche.</li>
+                                <li>Rodar los bordes de los alfajores en coco rallado.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Postre 6: Mochi (Japón) -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                    <div class="image-loading" data-recipe-name="Mochi">Cargando imagen...</div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-2">Mochi</h3>
+                        <p class="text-gray-600 text-sm mb-4">Pequeños y masticables pasteles de arroz japoneses, a menudo rellenos de pasta de judías dulces o helado.</p>
+                        <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                        <div class="recipe-card-details mt-4 text-gray-700">
+                            <p class="font-semibold text-blue-600 mb-2">Origen: Japón</p>
+                            <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                            <ul class="list-disc list-inside space-y-1 text-sm">
+                                <li>100g de harina de arroz glutinoso (mochiko)</li>
+                                <li>180ml de agua</li>
+                                <li>50g de azúcar</li>
+                                <li>Maicena para espolvorear</li>
+                                <li>Relleno a elección: pasta de judías rojas (anko), helado, frutas</li>
+                            </ul>
+                            <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                            <ol class="list-decimal list-inside space-y-1 text-sm">
+                                <li>En un bol apto para microondas, mezclar la harina de arroz glutinoso y el azúcar. Añadir el agua y mezclar hasta que no haya grumos.</li>
+                                <li>Cubrir el bol con film transparente y cocinar en el microondas por 1 minuto a máxima potencia.</li>
+                                <li>Remover bien la masa. Cubrir de nuevo y cocinar por otro minuto.</li>
+                                <li>Remover de nuevo. La masa debe estar translúcida y pegajosa. Si no, cocinar 30 segundos más.</li>
+                                <li>Espolvorear generosamente una superficie de trabajo con maicena. Volcar la masa de mochi caliente sobre la maicena.</li>
+                                <li>Espolvorear más maicena por encima y aplanar suavemente con las manos o un rodillo.</li>
+                                <li>Cortar la masa en cuadrados. Colocar una porción de relleno en el centro de cada cuadrado.</li>
+                                <li>Doblar los bordes de la masa sobre el relleno y pellizcar para sellar, formando una bola.</li>
+                                <li>Retirar el exceso de maicena y servir. Si se rellenan con helado, congelar el mochi relleno por al menos 2 horas antes de servir.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Postre 7: Pastel de Zanahoria (Origen incierto, popular en Occidente) -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                    <div class="image-loading" data-recipe-name="Pastel de Zanahoria">Cargando imagen...</div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-2">Pastel de Zanahoria</h3>
+                        <p class="text-gray-600 text-sm mb-4">Un pastel húmedo y especiado con zanahoria rallada y un glaseado cremoso de queso.</p>
+                        <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                        <div class="recipe-card-details mt-4 text-gray-700">
+                            <p class="font-semibold text-blue-600 mb-2">Origen: Occidental</p>
+                            <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                            <ul class="list-disc list-inside space-y-1 text-sm">
+                                <li>Para el pastel: 2 tazas de harina, 2 tazas de azúcar, 1 cucharadita de bicarbonato, 1 cucharadita de polvo para hornear, 1 cucharadita de canela, 1/2 cucharadita de nuez moscada, 1/2 cucharadita de sal, 1 1/2 tazas de aceite vegetal, 4 huevos, 3 tazas de zanahoria rallada, 1/2 taza de nueces picadas (opcional)</li>
+                                <li>Para el glaseado: 250g de queso crema, 100g de mantequilla sin sal, 300g de azúcar impalpable, 1 cucharadita de extracto de vainilla</li>
+                            </ul>
+                            <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                            <ol class="list-decimal list-inside space-y-1 text-sm">
+                                <li>Precalentar el horno a 175°C. Engrasar y enharinar dos moldes redondos de 20cm.</li>
+                                <li>En un bol grande, mezclar la harina, azúcar, bicarbonato, polvo para hornear, canela, nuez moscada y sal.</li>
+                                <li>En otro bol, batir el aceite y los huevos. Incorporar los ingredientes húmedos a los secos, mezclando hasta combinar.</li>
+                                <li>Añadir la zanahoria rallada y las nueces (si se usan), mezclar suavemente.</li>
+                                <li>Dividir la masa entre los moldes y hornear por 30-35 minutos, o hasta que un palillo insertado en el centro salga limpio.</li>
+                                <li>Dejar enfriar los pasteles en los moldes por 10 minutos, luego desmoldar y dejar enfriar completamente sobre una rejilla.</li>
+                                <li>Para el glaseado: Batir el queso crema y la mantequilla hasta que estén suaves. Añadir el azúcar impalpable poco a poco, batiendo hasta que esté cremoso. Incorporar el extracto de vainilla.</li>
+                                <li>Una vez que los pasteles estén fríos, cubrir con el glaseado.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Postre 8: Tarta de Manzana (Origen incierto, popular en Occidente) -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                    <div class="image-loading" data-recipe-name="Tarta de Manzana">Cargando imagen...</div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-2">Tarta de Manzana</h3>
+                        <p class="text-gray-600 text-sm mb-4">Un postre clásico con un relleno dulce de manzanas y una crujiente masa.</p>
+                        <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                        <div class="recipe-card-details mt-4 text-gray-700">
+                            <p class="font-semibold text-blue-600 mb-2">Origen: Occidental</p>
+                            <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                            <ul class="list-disc list-inside space-y-1 text-sm">
+                                <li>Para la masa: 250g de harina, 125g de mantequilla fría, 1 huevo, 2 cucharadas de agua fría</li>
+                                <li>Para el relleno: 6-8 manzanas (Granny Smith o Golden), 100g de azúcar, 1 cucharadita de canela, 1/4 cucharadita de nuez moscada, 1 cucharada de jugo de limón, 1 cucharada de maicena</li>
+                            </ul>
+                            <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                            <ol class="list-decimal list-inside space-y-1 text-sm">
+                                <li>Para la masa: Mezclar harina y mantequilla hasta migas. Añadir huevo y agua, amasar hasta unir. Refrigerar 30 min.</li>
+                                <li>Para el relleno: Pelar, descorazonar y cortar las manzanas en rodajas finas. Mezclar con azúcar, canela, nuez moscada, jugo de limón y maicena.</li>
+                                <li>Dividir la masa en dos. Estirar una mitad y forrar un molde de tarta. Verter el relleno de manzana.</li>
+                                <li>Estirar la otra mitad de la masa y cubrir la tarta (o hacer tiras para un enrejado). Sellar los bordes.</li>
+                                <li>Hornear en horno precalentado a 190°C por 45-55 minutos, o hasta que la masa esté dorada y el relleno burbujee.</li>
+                                <li>Dejar enfriar antes de servir. Ideal con helado de vainilla.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Postre 9: Brownies (Estados Unidos) -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                    <div class="image-loading" data-recipe-name="Brownies">Cargando imagen...</div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-2">Brownies</h3>
+                        <p class="text-gray-600 text-sm mb-4">Cuadritos de chocolate densos y fudgy, con una corteza ligeramente crujiente.</p>
+                        <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                        <div class="recipe-card-details mt-4 text-gray-700">
+                            <p class="font-semibold text-blue-600 mb-2">Origen: Estados Unidos</p>
+                            <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                            <ul class="list-disc list-inside space-y-1 text-sm">
+                                <li>150g de mantequilla sin sal</li>
+                                <li>200g de chocolate negro (70% cacao), troceado</li>
+                                <li>200g de azúcar</li>
+                                <li>3 huevos grandes</li>
+                                <li>1 cucharadita de extracto de vainilla</li>
+                                <li>100g de harina de trigo</li>
+                                <li>1/4 cucharadita de sal</li>
+                                <li>50g de nueces o chips de chocolate (opcional)</li>
+                            </ul>
+                            <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                            <ol class="list-decimal list-inside space-y-1 text-sm">
+                                <li>Precalentar el horno a 175°C. Engrasar y enharinar un molde cuadrado de 20x20cm.</li>
+                                <li>En un bol resistente al calor, derretir la mantequilla y el chocolate al baño maría o en el microondas, revolviendo hasta que esté suave. Dejar enfriar un poco.</li>
+                                <li>En un bol grande, batir el azúcar y los huevos hasta que estén pálidos y esponjosos. Incorporar el extracto de vainilla.</li>
+                                <li>Añadir la mezcla de chocolate derretido al bol de los huevos, mezclando bien.</li>
+                                <li>Tamizar la harina y la sal sobre la mezcla húmeda. Mezclar suavemente hasta que se integre, sin batir en exceso. Si se usan, añadir las nueces o chips de chocolate.</li>
+                                <li>Verter la masa en el molde preparado y extender uniformemente.</li>
+                                <li>Hornear por 25-30 minutos, o hasta que un palillo insertado en el centro salga con algunas migas húmedas (no completamente limpio, para que queden fudgy).</li>
+                                <li>Dejar enfriar completamente en el molde sobre una rejilla antes de cortar en cuadrados.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Postre 10: Tarta de Queso Japonesa (Japón) -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                    <div class="image-loading" data-recipe-name="Tarta de Queso Japonesa">Cargando imagen...</div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-2">Tarta de Queso Japonesa</h3>
+                        <p class="text-gray-600 text-sm mb-4">Una tarta de queso increíblemente ligera y esponjosa, con una textura similar a un soufflé.</p>
+                        <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                        <div class="recipe-card-details mt-4 text-gray-700">
+                            <p class="font-semibold text-blue-600 mb-2">Origen: Japón</p>
+                            <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                            <ul class="list-disc list-inside space-y-1 text-sm">
+                                <li>200g de queso crema, a temperatura ambiente</li>
+                                <li>60g de mantequilla sin sal</li>
+                                <li>100ml de leche</li>
+                                <li>6 yemas de huevo</li>
+                                <li>60g de harina de trigo</li>
+                                <li>20g de maicena (fécula de maíz)</li>
+                                <li>6 claras de huevo</li>
+                                <li>100g de azúcar</li>
+                                <li>Jugo de 1/2 limón</li>
+                            </ul>
+                            <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                            <ol class="list-decimal list-inside space-y-1 text-sm">
+                                <li>Precalentar el horno a 160°C. Preparar un molde redondo de 20cm con papel de horno en la base y los lados.</li>
+                                <li>En un bol resistente al calor, combinar queso crema, mantequilla y leche. Calentar al baño maría, revolviendo hasta que se derrita y esté suave. Retirar del fuego.</li>
+                                <li>Añadir las yemas de huevo una a una a la mezcla de queso, batiendo bien.</li>
+                                <li>Tamizar la harina y la maicena sobre la mezcla. Mezclar suavemente hasta que no haya grumos.</li>
+                                <li>En otro bol limpio, batir las claras de huevo a punto de nieve, añadiendo el azúcar gradualmente hasta obtener un merengue firme y brillante. Incorporar el jugo de limón al final.</li>
+                                <li>Incorporar el merengue a la mezcla de queso en tres adiciones, doblando suavemente con una espátula para no bajar el aire.</li>
+                                <li>Verter la masa en el molde preparado. Colocar el molde en una bandeja para hornear y llenar la bandeja con agua caliente hasta la mitad de la altura del molde (baño maría).</li>
+                                <li>Hornear por 60-70 minutos, o hasta que la tarta esté dorada y firme. Apagar el horno y dejar la tarta dentro con la puerta entreabierta por 15-20 minutos para evitar que se baje.</li>
+                                <li>Retirar del horno y del baño maría. Dejar enfriar completamente antes de desmoldar y refrigerar por al menos 2 horas antes de servir.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Postre 11: Churros con Dulce de Leche (Argentina) -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                    <div class="image-loading" data-recipe-name="Churros con Dulce de Leche">Cargando imagen...</div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-2">Churros con Dulce de Leche</h3>
+                        <p class="text-gray-600 text-sm mb-4">Crujientes churros fritos, rellenos o acompañados de dulce de leche, un postre clásico argentino.</p>
+                        <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                        <div class="recipe-card-details mt-4 text-gray-700">
+                            <p class="font-semibold text-blue-600 mb-2">Origen: Argentina</p>
+                            <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                            <ul class="list-disc list-inside space-y-1 text-sm">
+                                <li>250ml de agua</li>
+                                <li>150g de harina de trigo</li>
+                                <li>1/2 cucharadita de sal</li>
+                                <li>Aceite vegetal para freír</li>
+                                <li>Dulce de leche para rellenar o acompañar</li>
+                                <li>Azúcar para espolvorear (opcional)</li>
+                            </ul>
+                            <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                            <ol class="list-decimal list-inside space-y-1 text-sm">
+                                <li>Para los churros: Calentar el agua con la sal hasta que hierva. Retirar del fuego y añadir la harina de golpe, mezclando vigorosamente hasta formar una bola de masa.</li>
+                                <li>Colocar la masa en una manga pastelera con boquilla de estrella grande.</li>
+                                <li>Calentar abundante aceite en una sartén profunda a 180°C.</li>
+                                <li>Formar los churros directamente en el aceite caliente, cortándolos con unas tijeras. Freír hasta que estén dorados y crujientes.</li>
+                                <li>Retirar y escurrir sobre papel de cocina. Espolvorear con azúcar si se desea.</li>
+                                <li>Servir los churros calientes con dulce de leche para mojar o rellenar.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Postre 12: Pavlova (Australia/Nueva Zelanda) -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                    <div class="image-loading" data-recipe-name="Pavlova">Cargando imagen...</div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-2">Pavlova</h3>
+                        <p class="text-gray-600 text-sm mb-4">Un postre elegante de merengue crujiente, cubierto con crema batida y frutas frescas.</p>
+                        <button class="toggle-details bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Ver Detalles</button>
+                        <div class="recipe-card-details mt-4 text-gray-700">
+                            <p class="font-semibold text-blue-600 mb-2">Origen: Australia/Nueva Zelanda</p>
+                            <h4 class="font-semibold text-lg mb-2">Ingredientes:</h4>
+                            <ul class="list-disc list-inside space-y-1 text-sm">
+                                <li>4 claras de huevo grandes, a temperatura ambiente</li>
+                                <li>250g de azúcar superfina</li>
+                                <li>1 cucharadita de vinagre blanco o jugo de limón</li>
+                                <li>1 cucharadita de extracto de vainilla</li>
+                                <li>1 cucharada de maicena</li>
+                                <li>250ml de nata para montar, fría</li>
+                                <li>Frutas frescas variadas para decorar (fresas, kiwis, bayas)</li>
+                            </ul>
+                            <h4 class="font-semibold text-lg mt-4 mb-2">Instrucciones:</h4>
+                            <ol class="list-decimal list-inside space-y-1 text-sm">
+                                <li>Precalentar el horno a 120°C. Forrar una bandeja para hornear con papel de horno y dibujar un círculo de 20-22 cm.</li>
+                                <li>En un bol muy limpio, batir las claras de huevo a punto de nieve.</li>
+                                <li>Añadir el azúcar gradualmente, una cucharada a la vez, batiendo continuamente hasta obtener un merengue firme, brillante y que forme picos.</li>
+                                <li>Incorporar suavemente el vinagre, el extracto de vainilla y la maicena con una espátula.</li>
+                                <li>Extender el merengue sobre el círculo dibujado en el papel de horno, formando un nido con los bordes ligeramente más altos.</li>
+                                <li>Hornear por 1 hora y 15 minutos a 1 hora y 30 minutos, o hasta que el merengue esté crujiente por fuera y se despegue fácilmente del papel. Apagar el horno y dejar enfriar completamente dentro del horno con la puerta entreabierta.</li>
+                                <li>Una vez frío, batir la nata hasta que esté firme.</li>
+                                <li>Cubrir la pavlova con la nata batida y decorar generosamente con frutas frescas. Servir inmediatamente.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 mt-12 rounded-t-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm flex flex-col items-center">
+            <p>&copy; 2025 Recetas Únicas!. Todos los derechos reservados.</p>
+            <p class="mt-2">Hecho con pasión por la cocina mundial.</p>
+            <div class="mt-4">
+                <!-- Botón de WhatsApp -->
+                <a href="https://wa.me/5491138443338" target="_blank" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300">
+                    <!-- Icono de WhatsApp (SVG simple) -->
+                    <svg class="-ml-1 mr-3 h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.6-3.807-1.6-5.87C.145 5.57 5.729 0 12.001 0c3.065 0 5.666 1.254 7.685 3.272 2.019 2.019 3.272 4.62 3.272 7.685 0 6.273-5.571 11.856-11.849 11.856-1.966 0-3.86-.503-5.51-1.455l-6.216 1.625zm6.54-4.475l.498.3c1.464.881 3.149 1.341 4.887 1.341 5.378 0 9.74-4.359 9.74-9.74 0-5.378-4.359-9.74-9.74-9.74-5.378 0-9.74 4.362-9.74 9.74 0 1.765.462 3.444 1.341 4.887l.3.498-1.579 5.772 5.772-1.579zm6.198-1.151c-.271-.135-.615-.213-.96-.213-.344 0-.688.078-.96.213-.271.135-.49.333-.64.577-.15.244-.23.53-.23.832 0 .302.08.588.23.832.15.244.369.442.64.577.272.135.616.213.96.213.344 0 .688-.078.96-.213.271-.135.49-.333.64-.577.15-.244.23-.53.23-.832 0-.302-.08-.588-.23-.832-.15-.244-.369-.442-.64-.577zM8.08 15.632c-.271-.135-.615-.213-.96-.213-.344 0-.688.078-.96.213-.271.135-.49.333-.64.577-.15.244-.23.53-.23.832 0 .302.08.588.23.832.15.244.369.442.64.577.272.135.616.213.96.213.344 0 .688-.078.96-.213.271-.135.49-.333.64-.577.15-.244.23-.53.23-.832 0-.302-.08-.588-.23-.832-.15-.244-.369-.442-.64-.577z"/>
+                    </svg>
+                    Contactar por WhatsApp
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButtons = document.querySelectorAll('.toggle-details');
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const details = this.nextElementSibling;
+                    details.classList.toggle('open');
+                    if (details.classList.contains('open')) {
+                        this.textContent = 'Ocultar Detalles';
+                    } else {
+                        this.textContent = 'Ver Detalles';
+                    }
+                });
+            });
+
+            // --- CONFIGURACIÓN DE API (GLOBAL PARA AMBAS FUNCIONES DE IMAGEN) ---
+            const API_ENDPOINT = 'https://api.pexels.com/v1/search';
+            const API_KEY = 'JLKarf8wmf1pdZ9WqB1SyRqVYNESPx4onEg8Es8ijjUfPApX0C8dbp6c'; // Asegúrate de que esta sea tu clave real
+
+            console.log('API Key:', API_KEY ? 'Presente' : 'Falta'); // Verifica si la API_KEY está presente
+
+            // Función para cargar la imagen de portada
+            async function loadBannerImage() {
+                console.log('Intentando cargar la imagen de cabecera...');
+                const bannerContainer = document.getElementById('banner-image-container');
+                const query = 'gourmet food dish'; // Consulta genérica para una imagen impactante
+                const photoSize = 'large'; // Usar tamaño large para mejor calidad
+
+                if (!API_KEY) {
+                    bannerContainer.innerHTML = 'Error: API Key no configurada para la imagen de portada.';
+                    console.error('Error: API_KEY no configurada para la imagen de portada.');
+                    return;
+                }
+
+                try {
+                    console.log(`Obteniendo imagen de cabecera de: ${API_ENDPOINT}?query=${encodeURIComponent(query)}&per_page=1`);
+                    const response = await fetch(`${API_ENDPOINT}?query=${encodeURIComponent(query)}&per_page=1`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': API_KEY,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error(`Error HTTP para banner: ${response.status} - ${response.statusText}. Cuerpo de respuesta: ${errorText}`);
+                        throw new Error(`Error HTTP! estado: ${response.status} - ${response.statusText}. Detalles: ${errorText}`);
+                    }
+                    const data = await response.json();
+                    console.log('Datos de respuesta de la API para el banner:', data);
+
+                    if (data.photos && data.photos.length > 0) {
+                        const photo = data.photos[0];
+                        const imgElement = document.createElement('img');
+                        imgElement.src = photo.src[photoSize];
+                        imgElement.alt = `Plato de comida gourmet`;
+                        imgElement.classList.add('w-full', 'h-full', 'object-cover', 'rounded-lg', 'shadow-md');
+
+                        bannerContainer.innerHTML = ''; // Eliminar el mensaje de carga inmediatamente
+                        bannerContainer.classList.remove('flex', 'items-center', 'justify-content', 'text-gray-600', 'font-bold');
+                        bannerContainer.appendChild(imgElement); // Añadir la imagen inmediatamente
+
+                        imgElement.onload = () => {
+                            console.log(`Imagen de cabecera cargada exitosamente: ${imgElement.src}`);
+                        };
+                        imgElement.onerror = () => {
+                            console.error(`Error al cargar la imagen de cabecera: ${imgElement.src}. Usando marcador de posición.`);
+                            imgElement.src = `https://placehold.co/960x480/e2e8f0/64748b?text=Recetas+Únicas`;
+                            // No es necesario limpiar innerHTML de nuevo aquí, solo actualizar src
+                        };
+                    } else {
+                        bannerContainer.innerHTML = ''; // Eliminar el mensaje de carga
+                        console.warn('No se encontró una URL de imagen válida en la respuesta de la API para el banner. Mostrando una imagen de marcador de posición.');
+                        const imgElement = document.createElement('img');
+                        imgElement.src = `https://placehold.co/960x480/e2e8f0/64748b?text=Recetas+Únicas`;
+                        imgElement.alt = 'Imagen de marcador de posición';
+                        imgElement.classList.add('w-full', 'h-full', 'object-cover', 'rounded-lg', 'shadow-md');
+                        bannerContainer.appendChild(imgElement);
+                    }
+
+                } catch (error) {
+                    console.error('Error al obtener la imagen de cabecera de la API:', error);
+                    bannerContainer.innerHTML = ''; // Eliminar el mensaje de carga
+                    const imgElement = document.createElement('img');
+                    imgElement.src = `https://placehold.co/960x480/e2e8f0/64748b?text=Error+Carga+Imagen`;
+                    imgElement.alt = 'Imagen de marcador de posición (Error de carga)';
+                    imgElement.classList.add('w-full', 'h-full', 'object-cover', 'rounded-lg', 'shadow-md');
+                    bannerContainer.appendChild(imgElement);
+                }
+            }
+
+
+            // Función para cargar imágenes para las recetas individuales
+            async function loadImageForRecipe(recipeElement) {
+                const recipeName = recipeElement.dataset.recipeName;
+                const imageContainer = recipeElement; // El elemento con la clase .image-loading
+
+                console.log(`Intentando cargar imagen para la receta: ${recipeName}`);
+
+                if (!API_KEY) {
+                    imageContainer.innerHTML = '<div class="image-loading">Por favor, configura la API Key.</div>';
+                    console.error('Error: API_KEY no configurada para las imágenes de recetas.');
+                    return;
+                }
+
+                const queryParam = encodeURIComponent(recipeName);
+                let requestUrl = `${API_ENDPOINT}?query=${queryParam}&per_page=1`;
+
+                const requestOptions = {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': API_KEY,
+                        'Content-Type': 'application/json'
+                    }
+                };
+
+                try {
+                    console.log(`Obteniendo imagen de receta de: ${requestUrl}`);
+                    const response = await fetch(requestUrl, requestOptions);
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error(`Error HTTP para receta ${recipeName}: ${response.status} - ${response.statusText}. Cuerpo de respuesta: ${errorText}`);
+                        throw new Error(`Error HTTP! estado: ${response.status} - ${response.statusText}. Detalles: ${errorText}`);
+                    }
+                    const data = await response.json();
+                    console.log(`Datos de respuesta de la API para ${recipeName}:`, data);
+
+                    const imageUrl = data.photos && data.photos.length > 0 ? data.photos[0].src.medium : '';
+
+                    if (imageUrl) {
+                        imageContainer.innerHTML = ''; // Eliminar el mensaje de carga inmediatamente
+                        const imgElement = document.createElement('img');
+                        imgElement.src = imageUrl;
+                        imgElement.alt = `Imagen de ${recipeName}`;
+                        imgElement.classList.add('recipe-image');
+                        imageContainer.appendChild(imgElement); // Añadir la imagen inmediatamente
+
+                        imgElement.onload = () => {
+                            console.log(`Imagen de receta cargada exitosamente para ${recipeName}: ${imgElement.src}`);
+                            // No es necesario limpiar innerHTML de nuevo aquí
+                        };
+
+                        imgElement.onerror = () => {
+                            console.error(`Error al cargar la imagen para ${recipeName}: ${imgElement.src}. Usando marcador de posición.`);
+                            imageContainer.innerHTML = '';
+                            const placeholderImg = document.createElement('img');
+                            placeholderImg.src = `https://placehold.co/100%x192/e2e8f0/64748b?text=${encodeURIComponent(recipeName)}`;
+                            placeholderImg.alt = `Imagen de ${recipeName} (Error)`;
+                            placeholderImg.classList.add('recipe-image');
+                            imageContainer.appendChild(placeholderImg);
+                        };
+                    } else {
+                        imageContainer.innerHTML = ''; // Eliminar el mensaje de carga
+                        console.warn(`No se encontró URL de imagen en la respuesta de la API para ${recipeName}. Mostrando marcador de posición.`);
+                        const placeholderImg = document.createElement('img');
+                        placeholderImg.src = `https://placehold.co/100%x192/e2e8f0/64748b?text=${encodeURIComponent(recipeName)}+No+Image`;
+                        placeholderImg.alt = `Imagen de ${recipeName} (No encontrada)`;
+                        placeholderImg.classList.add('recipe-image');
+                        imageContainer.appendChild(placeholderImg);
+                    }
+
+                } catch (error) {
+                    console.error(`Error al obtener la imagen de la API para ${recipeName}:`, error);
+                    imageContainer.innerHTML = ''; // Eliminar el mensaje de carga
+                    const placeholderImg = document.createElement('img');
+                    placeholderImg.src = `https://placehold.co/100%x192/e2e8f0/64748b?text=${encodeURIComponent(recipeName)}+Error`;
+                    placeholderImg.alt = `Imagen de ${recipeName} (Error de carga)`;
+                    placeholderImg.classList.add('recipe-image');
+                    imageContainer.appendChild(placeholderImg);
+                }
+            }
+
+            // Cargar la imagen de portada al cargar la página
+            loadBannerImage();
+
+            // Cargar imágenes para todas las recetas al cargar la página
+            const imageLoadingContainers = document.querySelectorAll('.image-loading');
+            imageLoadingContainers.forEach(container => {
+                loadImageForRecipe(container);
+            });
+        });
+    </script>
+</body>
+</html>
